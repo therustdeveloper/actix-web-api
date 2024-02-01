@@ -30,12 +30,12 @@ async fn main() -> std::io::Result<()> {
             pool
         }
         Err(err) => {
-            println!("🧨 Failed to connect to the database: {:?}", err);
+            println!("🔥 Failed to connect to the database: {:?}", err);
             std::process::exit(1);
         }
     };
 
-    println!("🏁 Server started successfully");
+    println!("🚀 Server started successfully");
 
     HttpServer::new(move || {
         let cors = Cors::default()
