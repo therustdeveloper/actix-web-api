@@ -30,7 +30,7 @@ pub async fn note_list_handler(
 
     let notes = query_result.unwrap();
 
-    let json_response = serde_json::json!({
+    let json_response = json!({
         "status": "success",
         "results": notes.len(),
         "notes": notes
@@ -55,21 +55,21 @@ async fn create_note_handler(
     
     match query_result {
         Ok(note) => {
-            let note_response = serde_json::json!({"status": "success", "data": serde_json::json!({
+            let note_response = json!({"status": "success", "data": serde_json::json!({
                 "note": note,
             })});
 
-            return HttpResponse::Ok().json(note_response);
+            HttpResponse::Ok().json(note_response)
         }
         Err(e) => {
             if e.to_string()
                 .contains("duplicate key value violates unique constraint") {
                 return HttpResponse::BadRequest()
-                    .json(serde_json::json!({"status": "fail", "message": "Note with that title already exists"}));
+                    .json(json!({"status": "fail", "message": "Note with that title already exists"}));
             }
 
-            return HttpResponse::InternalServerError()
-                .json(serde_json::json!({"status": "error", "message": format!("{:?}", e)}));
+            HttpResponse::InternalServerError()
+                .json(json!({"status": "error", "message": format!("{:?}", e)}))
         }
     }
 }
