@@ -73,3 +73,33 @@ async fn create_note_handler(
         }
     }
 }
+
+#[get("/notes/{id}")]
+async fn get_note_handler(
+    path: web::Path<uuid::Uuid>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let note_id = path.into_inner();
+    let query_result = sqlx::query_as!(
+        NoteModel,
+        "SELECT * FROM notes WHERE id = $1",
+        note_id
+    )
+        .fetch_one(&data.db)
+        .await;
+
+    match query_result {
+        Ok(note) => {
+            let note_response = json!({"state": "success", "data": json!({
+                "note": note
+            })});
+
+            HttpResponse::Ok().json(note_response)
+        }
+        Err(_) => {
+            let message = format!("Note with ID: {} not found", note_id);
+            HttpResponse::NotFound()
+                .json(json!({"status": "fail", "message": message}))
+        }
+    }
+}
