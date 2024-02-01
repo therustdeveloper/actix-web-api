@@ -3,7 +3,7 @@ use crate::{
     schema::{FilterOptions, CreateNoteSchema},
     AppState,
 };
-use actix_web::{get, web, HttpResponse, Responder, post, patch};
+use actix_web::{get, web, HttpResponse, Responder, post, patch, delete};
 use chrono::Utc;
 use serde_json::json;
 use crate::schema::UpdateNoteSchema;
@@ -157,4 +157,24 @@ async fn edit_note_handler(
                 .json(json!({"status": "error", "message": message}))
         }
     }
+}
+
+#[delete("/notes/{id}")]
+async fn delete_note_handler(
+    path: web::Path<uuid::Uuid>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let note_id = path.into_inner();
+    let rows_affected = sqlx::query!("DELETE FROM notes WHERE id = $1", note_id)
+        .execute(&data.db)
+        .await
+        .unwrap()
+        .rows_affected();
+
+    if rows_affected == 0 {
+        let message = format!("Note with ID: {} not found", note_id);
+        return HttpResponse::NotFound().json(json!({"status": "fail", "message": message}));
+    }
+
+    HttpResponse::NoContent().finish()
 }
