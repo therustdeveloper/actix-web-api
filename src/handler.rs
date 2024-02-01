@@ -1,4 +1,3 @@
-use std::fmt::format;
 use crate::{
     model::NoteModel,
     schema::{FilterOptions, CreateNoteSchema},
