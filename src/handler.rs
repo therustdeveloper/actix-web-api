@@ -1,3 +1,4 @@
+use std::fmt::format;
 use crate::{
     model::NoteModel,
     schema::{FilterOptions, CreateNoteSchema},
@@ -22,7 +23,7 @@ pub fn config(conf: &mut web::ServiceConfig) {
 
 #[get("/healthcheck")]
 pub async fn healthcheck() -> impl Responder {
-    const MESSAGE: &str = "💻 Application working";
+    const MESSAGE: &str = "Application working";
     HttpResponse::Ok().json(json!({"status": "success", "message": MESSAGE}))
 }
 
