@@ -8,6 +8,24 @@ use chrono::Utc;
 use serde_json::json;
 use crate::schema::UpdateNoteSchema;
 
+pub fn config(conf: &mut web::ServiceConfig) {
+    let scope = web::scope("/api")
+        .service(healthcheck)
+        .service(note_list_handler)
+        .service(create_note_handler)
+        .service(get_note_handler)
+        .service(edit_note_handler)
+        .service(delete_note_handler);
+
+    conf.service(scope);
+}
+
+#[get("/healthcheck")]
+pub async fn healthcheck() -> impl Responder {
+    const MESSAGE: &str = "💻 Application working";
+    HttpResponse::Ok().json(json!({"status": "success", "message": MESSAGE}))
+}
+
 #[get("/notes")]
 pub async fn note_list_handler(
     opts: web::Query<FilterOptions>,
