@@ -26,7 +26,7 @@ async fn main() -> std::io::Result<()> {
         .connect(&database_url)
         .await {
         Ok(pool) => {
-            println!("✅  Connection to the database is successful");
+            println!("✅ Connection to the database is successful");
             pool
         }
         Err(err) => {
